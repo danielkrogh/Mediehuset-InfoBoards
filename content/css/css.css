@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+#activities {
+  max-width: 50%;
+  margin: 1rem auto 0 auto;
+  border: 1px solid black;
+}
+
+#activities .we {
+  background-color: #d64643;
+}
+
+#activities .gr {
+  background-color: #4d72a6;
+}
+
+#activities .dm {
+  background-color: #88a63e;
+}
+
+#activities .mg {
+  background-color: #90368b;
+}
