@@ -15,14 +15,14 @@ function getActivitiesData() {
 }
 
 function sortActivitiesData() {
-    let classNameArr = [];
+    let activitiesArr = [];
 
     return getActivitiesData().then((data) => {
         data.result.forEach(element => {
-            classNameArr.push(element.class)
+            activitiesArr.push(element)
         });
 
-        return classNameArr;
+        return activitiesArr;
     })
 }
 
@@ -31,41 +31,61 @@ function sortActivitiesData() {
     View
 */
 const activitiesContainer = document.querySelector('#activities');
+let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw'];
 
 function setActivities() {
-    sortActivitiesData().then((classNameArr) => {
-        classNameArr.forEach(className => {
+    sortActivitiesData().then((activitiesArr) => {
+        activitiesArr.forEach(activity => {
             let p = document.createElement('p');
 
-            if (className.search('we') >= 0) {
-                p.setAttribute('class', 'we')
-                p.innerHTML = 'Webudvikler'
-            } else if (className.search('ggr') >= 0) {
-                p.setAttribute('class', 'gr')
-                p.innerHTML = 'Grafisk Tekniker Grundforløb 2'
-            } else if (className.search('agr') >= 0) {
-                p.setAttribute('class', 'amu')
-                p.innerHTML = 'AMU - Billedbehandling'
-            } else if (className.search('abi') >= 0) {
-                p.setAttribute('class', 'amu')
-                p.innerHTML = 'AMU - Grafisk'
-            } else if (className.search('gr') >= 0) {
-                p.setAttribute('class', 'gr')
-                p.innerHTML = 'Grafisk Tekniker'
-            } else if (className.search('dm') >= 0) {
-                p.setAttribute('class', 'dm')
-                p.innerHTML = 'Digital Medier'
-            } else if (className.search('mg') >= 0) {
-                p.setAttribute('class', 'mg')
-                p.innerHTML = 'Mediegrafiker'
-            } else if (className.search('iw') >= 0) {
-                p.setAttribute('class', 'iw')
-                p.innerHTML = 'It, web og medier'
-            } else {
-                p.innerHTML = 'noget andet'
+            for (i = 0; i < classShorthands.length; i++) {
+                if (activity.class.search(`${classShorthands[i]}`) >= 0) {
+                    p.setAttribute('class', `${classShorthands[i]}`)
+                    p.innerHTML = `${changeName(classShorthands[i])} | ${activity.classroom} | ${activity.name} | ${activity.datetime}`;
+                    break;
+                } else {
+                    p.innerHTML = 'Ukendt uddannelse.'
+                }
             }
 
             activitiesContainer.appendChild(p);
+
+            function changeName(shorthand) {
+                let text;
+                switch (shorthand) {
+                    case 'we':
+                        text = 'Webudvikler';
+                        return text;
+                        break;
+                    case 'ggr':
+                        text = 'Grafisk Tekniker Grundforløb 2';
+                        return text;
+                        break;
+                    case 'agr':
+                        text = 'AMU - Billedbehandling';
+                        return text;
+                        break;
+                    case 'abi':
+                        text = 'AMU - Grafisk';
+                        return text;
+                        break;
+                    case 'gr':
+                        text = 'Grafisk Tekniker';
+                        return text;
+                        break;
+                    case 'dm':
+                        text = 'Digital Medier';
+                        return text;
+                        break;
+                    case 'mg':
+                        text = 'Mediegrafiker';
+                        return text;
+                        break;
+                    case 'iw':
+                        text = 'It, web og medier';
+                        return text;
+                }
+            }
         })
     })
 }

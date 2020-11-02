@@ -16,7 +16,7 @@ body {
   background-color: #d64643;
 }
 
-#activities .gr {
+#activities .gr, #activities .ggr {
   background-color: #4d72a6;
 }
 
@@ -32,6 +32,6 @@ body {
   background-color: #bdbdbd;
 }
 
-#activities .amu {
-  background-color: #fff33b;
+#activities .agr, #activities .abi {
+  background-color: #b4b338;
 }
