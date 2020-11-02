@@ -30,34 +30,34 @@ function sortActivitiesData() { // Behandler data fra API
 /*
     View
 */
-const activitiesContainer = document.querySelector('#activities');
-let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw'];
+const activitiesContainer = document.querySelector('#activities'); // Container der skal indeholde vores aktiviteter
+let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Forkortelser i klassernes navne
 
-function setActivities() { // Opretter aktiviteter
+function setActivities() { // Opretter aktiviteter i HTML
     sortActivitiesData().then((activitiesArr) => {
         activitiesArr.forEach(activity => {
-            if (new Date(activity.timestamp * 1000).getDate() == new Date().getDate() && (new Date().getHours() + 1) < 15) { // Hvis aktivitets dato er = dags dato og klokken er før kl. 15 vises dagens aktiviteter           
+            if (new Date(activity.timestamp * 1000).getDate() == new Date().getDate() && (new Date().getHours() + 1) < 15) { // Hvis aktivitets dato er dags dato og klokken er før kl. 15 vises dagens aktiviteter           
                 createActivities();
             } else if (new Date(activity.timestamp * 1000).getDate() == (new Date().getDate() + 1) && (new Date().getHours() + 1) >= 15) { // Hvis aktivitets dato er i morgen og klokken er efter kl. 15 vises morgendagens aktiviteter
                 createActivities();
             }
 
             function createActivities() {
-                let p = document.createElement('p');
+                let p = document.createElement('p'); // Opretter p element
 
-                for (i = 0; i < classShorthands.length; i++) {
-                    if (activity.class.search(`${classShorthands[i]}`) >= 0) {
-                        p.setAttribute('class', `${classShorthands[i]}`)
-                        p.innerHTML = `${changeName(classShorthands[i])} | ${activity.classroom} | ${activity.name} | ${activity.datetime}`;
+                for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
+                    if (activity.class.search(`${classShorthands[i]}`) >= 0) { // Vi søger i aktivitetens klassenavn efter forkortelse. Uden match vil vi få -1
+                        p.setAttribute('class', `${classShorthands[i]}`); // Vi sætter forkortelse som klasse på p element
+                        p.innerHTML = `${changeName(classShorthands[i])} | ${activity.classroom} | ${activity.name} | ${activity.datetime}`; // Indre HTML på p element sættes
                         break;
                     } else {
-                        p.innerHTML = 'Ukendt uddannelse.'
+                        p.innerHTML = 'Ukendt uddannelse.' // Uden match kender vi ikke til uddannelsen
                     }
                 }
 
-                activitiesContainer.appendChild(p);
+                activitiesContainer.appendChild(p); // Oprettede p elemet appendes til vores container
 
-                function changeName(shorthand) {
+                function changeName(shorthand) { // Funktion vi kan kalde, for at lave forkortelse om til uddannelsens navn
                     let text;
                     switch (shorthand) {
                         case 'we':
