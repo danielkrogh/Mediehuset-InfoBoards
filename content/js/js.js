@@ -33,6 +33,16 @@ function sortActivitiesData() { // Behandler data fra API
 const activitiesContainer = document.querySelector('#activities'); // Container der skal indeholde vores aktiviteter
 let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Forkortelser i klassernes navne
 
+const classTimes = [
+    {start: 29700, end: 33599}, // Kl. 8.15 - 9.20
+    {start: 33600, end: 37799}, // Kl. 9.20 - 10.30
+    {start: 37800, end: 41399}, // Kl. 10.30 - 11.30
+    {start: 41400, end: 43199}, // Kl. 11.30 - 12.00 - hvordan håndteres pause?
+    {start: 43200, end: 46799}, // Kl. 12.00 - 13.00
+    {start: 46800, end: 50399}, // Kl. 13.00 - 14.00
+    {start: 50400, end: 54900} // Kl. 14.00 - 15.15
+]
+
 function setActivities() { // Opretter aktiviteter i HTML
     sortActivitiesData().then((activitiesArr) => {
         activitiesArr.forEach(activity => {
