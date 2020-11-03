@@ -27,7 +27,7 @@
   margin: 0;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -80,6 +80,16 @@ body {
   font-weight: 700;
 }
 
+#activity-widget .card:first-of-type > div {
+  margin: 5px 0 5px;
+  padding: 0;
+  border-right: 1px solid #fff;
+}
+
+#activity-widget .card:first-of-type > div:first-of-type, #activity-widget .card:first-of-type > div:last-of-type {
+  border: none;
+}
+
 #activity-widget .card:nth-child(1n) {
   background-color: #3F4259;
 }
@@ -94,6 +104,7 @@ body {
 
 #activity-widget .card div.time {
   width: 20%;
+  font-weight: 700;
 }
 
 #activity-widget .card div.location {
