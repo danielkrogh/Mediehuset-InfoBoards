@@ -31,7 +31,18 @@ function sortActivitiesData() { // Behandler data fra API
     View
 */
 const activitiesContainer = document.querySelector('#activities'); // Container der skal indeholde vores aktiviteter
+const activityWidget = document.querySelector('#activity-widget');
 let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Forkortelser i klassernes navne
+
+let infoLi = `
+    <li class="card">
+        <div class="time">Tid</div>
+        <div class="location">Lokale</div>
+        <div class="class">Hold</div>
+        <div class="subject">Fag</div>
+    </li>`;
+
+activityWidget.insertAdjacentHTML('beforeend', infoLi); // Opretter overskrift
 
 const classTimes = [
     {start: 29700, end: 33599}, // Kl. 8.15 - 9.20
@@ -80,19 +91,65 @@ function setActivities() { // Opretter aktiviteter i HTML
             }
 
             function createActivities() {
-                let p = document.createElement('p'); // Opretter p element
+                // let p = document.createElement('p'); // Opretter p element
+
+                // for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
+                //     if (activity.class.search(`${classShorthands[i]}`) >= 0) { // Vi søger i aktivitetens klassenavn efter forkortelse. Uden match vil vi få -1
+                //         let date = new Date(activity.datetime);
+
+                //         p.setAttribute('class', `${classShorthands[i]}`); // Vi sætter forkortelse som klasse på p element
+                //         p.innerHTML = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()} | ${activity.classroom} | ${activity.class} | ${activity.name}`; // Indre HTML på p element sættes
+                //         break;
+                //     } else {
+                //         p.innerHTML = 'Ukendt uddannelse.' // Uden match kender vi ikke til uddannelsen
+                //     }
+                // }
+
+                // activitiesContainer.appendChild(p); // Oprettede p elemet appendes til vores container
+
+
+
+
+
+                let li = document.createElement('li');
 
                 for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
                     if (activity.class.search(`${classShorthands[i]}`) >= 0) { // Vi søger i aktivitetens klassenavn efter forkortelse. Uden match vil vi få -1
-                        p.setAttribute('class', `${classShorthands[i]}`); // Vi sætter forkortelse som klasse på p element
-                        p.innerHTML = `${changeName(classShorthands[i])} | ${activity.classroom} | ${activity.name} | ${activity.datetime}`; // Indre HTML på p element sættes
+                        let date = new Date(activity.datetime);
+                        
+                        li.setAttribute('class', 'card');
+
+                        let divTime = document.createElement('div');
+                        divTime.setAttribute('class', `time ${classShorthands[i]}`);
+                        divTime.innerHTML = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()}`
+
+                        let divLocation = document.createElement('div');
+                        divLocation.setAttribute('class', 'location');
+                        divLocation.innerHTML = `${activity.classroom}`
+
+                        let divClass = document.createElement('div');
+                        divClass.setAttribute('class', 'class');
+                        divClass.innerHTML = `${activity.class}`
+
+                        let divSubject = document.createElement('div');
+                        divSubject.setAttribute('class', 'subject');
+                        divSubject.innerHTML = `${activity.name}`
+
+                        li.appendChild(divTime);
+                        li.appendChild(divLocation);
+                        li.appendChild(divClass);
+                        li.appendChild(divSubject);
+
                         break;
                     } else {
-                        p.innerHTML = 'Ukendt uddannelse.' // Uden match kender vi ikke til uddannelsen
+
                     }
                 }
+                activityWidget.appendChild(li)
 
-                activitiesContainer.appendChild(p); // Oprettede p elemet appendes til vores container
+                
+
+
 
                 function changeName(shorthand) { // Funktion vi kan kalde, for at lave forkortelse om til uddannelsens navn
                     let text;
