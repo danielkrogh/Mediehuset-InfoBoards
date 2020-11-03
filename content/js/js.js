@@ -91,26 +91,6 @@ function setActivities() { // Opretter aktiviteter i HTML
             }
 
             function createActivities() {
-                // let p = document.createElement('p'); // Opretter p element
-
-                // for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
-                //     if (activity.class.search(`${classShorthands[i]}`) >= 0) { // Vi søger i aktivitetens klassenavn efter forkortelse. Uden match vil vi få -1
-                //         let date = new Date(activity.datetime);
-
-                //         p.setAttribute('class', `${classShorthands[i]}`); // Vi sætter forkortelse som klasse på p element
-                //         p.innerHTML = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()} | ${activity.classroom} | ${activity.class} | ${activity.name}`; // Indre HTML på p element sættes
-                //         break;
-                //     } else {
-                //         p.innerHTML = 'Ukendt uddannelse.' // Uden match kender vi ikke til uddannelsen
-                //     }
-                // }
-
-                // activitiesContainer.appendChild(p); // Oprettede p elemet appendes til vores container
-
-
-
-
-
                 let li = document.createElement('li');
 
                 for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
@@ -146,10 +126,6 @@ function setActivities() { // Opretter aktiviteter i HTML
                     }
                 }
                 activityWidget.appendChild(li)
-
-                
-
-
 
                 function changeName(shorthand) { // Funktion vi kan kalde, for at lave forkortelse om til uddannelsens navn
                     let text;
