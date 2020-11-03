@@ -76,6 +76,10 @@ body {
   color: #DFDFDF;
 }
 
+#activity-widget .card:first-of-type {
+  font-weight: 700;
+}
+
 #activity-widget .card:nth-child(1n) {
   background-color: #3F4259;
 }

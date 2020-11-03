@@ -85,7 +85,9 @@ function setActivities() { // Opretter aktiviteter i HTML
             }
 
             if (currentTime > classTimes[classTimes.length - 1].end) { // Er tidspunkt efter sidste classTime.end
-                if (classStartTime - (24 * 60 * 60) >= classTimes[0].start && classStartTime - (24 * 60 * 60) <= classTimes[0].end) { // Er klasse starttidspunkt mellem den første classTime.start & classTime.end
+                let nextTimestamp = activitiesArr[0].timestamp;
+
+                if (nextTimestamp == activity.timestamp) { // Hvis aktivitets timestamp er samme som første aktivitets timestamp
                     createActivities();
                 }
             }
