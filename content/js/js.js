@@ -35,21 +35,48 @@ let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Fo
 
 const classTimes = [
     {start: 29700, end: 33599}, // Kl. 8.15 - 9.20
-    {start: 33600, end: 37799}, // Kl. 9.20 - 10.30
-    {start: 37800, end: 41399}, // Kl. 10.30 - 11.30
+    {start: 33600, end: 37199}, // Kl. 9.20 - 10.20
+    {start: 37200, end: 41399}, // Kl. 10.20 - 11.30
     {start: 41400, end: 43199}, // Kl. 11.30 - 12.00 - hvordan håndteres pause?
     {start: 43200, end: 46799}, // Kl. 12.00 - 13.00
     {start: 46800, end: 50399}, // Kl. 13.00 - 14.00
     {start: 50400, end: 54900} // Kl. 14.00 - 15.15
 ]
 
+const dinnerBreak = {start: 41400, end: 43199};
+
+//
+// TIL AT TESTE ANDRE TIDSPUNKTER
+//
+let antalTimer = 0;
+let antalMinutter = 0;
+let antalSekunder = ((new Date().setHours(`${antalTimer}`,`${antalMinutter}`,0,0) - new Date().setHours(0,0,0,0)) / 1000);
+
 function setActivities() { // Opretter aktiviteter i HTML
     sortActivitiesData().then((activitiesArr) => {
         activitiesArr.forEach(activity => {
-            if (new Date(activity.timestamp * 1000).getDate() == new Date().getDate() && (new Date().getHours() + 1) < 15) { // Hvis aktivitets dato er dags dato og klokken er før kl. 15 vises dagens aktiviteter           
-                createActivities();
-            } else if (new Date(activity.timestamp * 1000).getDate() == (new Date().getDate() + 1) && (new Date().getHours() + 1) >= 15) { // Hvis aktivitets dato er i morgen og klokken er efter kl. 15 vises morgendagens aktiviteter
-                createActivities();
+
+            let currentTime = ((new Date().getTime() - new Date().setHours(0,0,0,0)) / 1000) + antalSekunder; // Nuværende tid i sekunder siden midnat
+            let classStartTime = (activity.timestamp - (new Date().setHours(0,0,0,0) / 1000)); // Klassensstarttidspunkt i sekunder siden midnat
+
+            classTimes.forEach(classTime => {
+                if (currentTime >= classTime.start && currentTime <= classTime.end) { // Er tidspunkt nu mellem classTime.start & classTime.end
+                    if (classStartTime >= classTime.start && classStartTime <= classTime.end) { // Er klasse starttidspunkt mellem classTime.start & classTime.end
+                        createActivities();
+                    }                     
+                }
+            })
+
+            if (currentTime >= dinnerBreak.start && currentTime <= dinnerBreak.end) {
+                if (classStartTime >= dinnerBreak.end && classStartTime <= 46799) {
+                    createActivities();
+                }
+            }
+
+            if (currentTime > classTimes[classTimes.length - 1].end) { // Er tidspunkt efter sidste classTime.end
+                if (classStartTime - (24 * 60 * 60) >= classTimes[0].start && classStartTime - (24 * 60 * 60) <= classTimes[0].end) { // Er klasse starttidspunkt mellem den første classTime.start & classTime.end
+                    createActivities();
+                }
             }
 
             function createActivities() {
