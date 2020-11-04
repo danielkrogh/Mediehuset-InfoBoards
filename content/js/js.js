@@ -30,8 +30,7 @@ function sortActivitiesData() { // Behandler data fra API
 /*
     View
 */
-const activitiesContainer = document.querySelector('#activities'); // Container der skal indeholde vores aktiviteter
-const activityWidget = document.querySelector('#activity-widget');
+const activityWidget = document.querySelector('#activity-widget'); // Container der skal indeholde vores aktiviteter
 let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Forkortelser i klassernes navne
 
 let infoLi = `
@@ -85,6 +84,14 @@ function setActivities() { // Opretter aktiviteter i HTML
             }
 
             if (currentTime > classTimes[classTimes.length - 1].end) { // Er tidspunkt efter sidste classTime.end
+                let nextTimestamp = activitiesArr[0].timestamp;
+
+                if (nextTimestamp == activity.timestamp) { // Hvis aktivitets timestamp er samme som første aktivitets timestamp
+                    createActivities();
+                }
+            }
+
+            if (currentTime < (activitiesArr[0].timestamp - (new Date().setHours(0,0,0,0) / 1000))) { // Er tidspunkt før første aktivitets timestamp
                 let nextTimestamp = activitiesArr[0].timestamp;
 
                 if (nextTimestamp == activity.timestamp) { // Hvis aktivitets timestamp er samme som første aktivitets timestamp
