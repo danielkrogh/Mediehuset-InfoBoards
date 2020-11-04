@@ -80,13 +80,13 @@ body {
   font-weight: 700;
 }
 
-#activity-widget .card:first-of-type > div {
+#activity-widget .card:first-of-type > p {
   margin: 5px 0 5px;
   padding: 0;
   border-right: 1px solid #fff;
 }
 
-#activity-widget .card:first-of-type > div:first-of-type, #activity-widget .card:first-of-type > div:last-of-type {
+#activity-widget .card:first-of-type > p:first-of-type, #activity-widget .card:first-of-type > p:last-of-type {
   border: none;
 }
 
@@ -98,23 +98,23 @@ body {
   background-color: #4D5A84;
 }
 
-#activity-widget .card div {
+#activity-widget .card p {
   padding: 5px;
 }
 
-#activity-widget .card div.time {
+#activity-widget .card p.time {
   width: 20%;
   font-weight: 700;
 }
 
-#activity-widget .card div.location {
+#activity-widget .card p.location {
   width: 20%;
 }
 
-#activity-widget .card div.class {
+#activity-widget .card p.class {
   width: 30%;
 }
 
-#activity-widget .card div.subject {
+#activity-widget .card p.topic {
   width: 30%;
 }
