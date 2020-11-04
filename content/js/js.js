@@ -9,7 +9,7 @@ async function fetchData() {
 };
 
 //dette bruges til at ændre vores nuværende klokkeslet
-const addHours = 0;
+const addHours = 3;
 const addSeconds = 3600 * addHours;
 
 //dette er vores nuværende klokkeslet (timestamp)
@@ -44,14 +44,19 @@ async function loadData() {
              activity.timestamp >= currentTimeOfDay[0].start && activity.timestamp <= currentTimeOfDay[0].end);
 
              if(!listOfActivities.length) {
-                let firstKey = activityArr[0];
-                    listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
+                getFirstActivities()
              };
 
     } else {
-        let firstKey = activityArr[0];
-            listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
+        getFirstActivities()
     };
+
+    function getFirstActivities() {
+        let firstKey = activityArr[0];
+        listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
+
+        return listOfActivities;
+    }
 
     const activeActivities = [];
 

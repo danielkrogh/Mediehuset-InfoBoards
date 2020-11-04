@@ -52,11 +52,15 @@ body {
 }
 
 #activity-widget {
-    width: 30vw;
+    width: 90%;
     height: fit-content;
     background-color: grey;
     display: flex;
     flex-direction: column;
+
+    @media (min-width: 1200px) {
+        width: 30%;
+    }
 
     .card {
         width: 100%;
@@ -90,6 +94,9 @@ body {
         }
 
         p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 5px;
 
             &.time {
