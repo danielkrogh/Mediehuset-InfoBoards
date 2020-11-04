@@ -47,18 +47,15 @@ const classTimes = [
     {start: 29700, end: 33599}, // Kl. 8.15 - 9.20
     {start: 33600, end: 37199}, // Kl. 9.20 - 10.20
     {start: 37200, end: 41399}, // Kl. 10.20 - 11.30
-    {start: 41400, end: 43199}, // Kl. 11.30 - 12.00 - hvordan håndteres pause?
-    {start: 43200, end: 46799}, // Kl. 12.00 - 13.00
+    {start: 41400, end: 46799}, // Kl. 11.30 - 13.00
     {start: 46800, end: 50399}, // Kl. 13.00 - 14.00
     {start: 50400, end: 54900} // Kl. 14.00 - 15.15
 ]
 
-const dinnerBreak = {start: 41400, end: 43199};
-
 //
 // TIL AT TESTE ANDRE TIDSPUNKTER
 //
-let antalTimer = 0;
+let antalTimer = 2;
 let antalMinutter = 0;
 let antalSekunder = ((new Date().setHours(`${antalTimer}`,`${antalMinutter}`,0,0) - new Date().setHours(0,0,0,0)) / 1000);
 
@@ -76,12 +73,6 @@ function setActivities() { // Opretter aktiviteter i HTML
                     }                     
                 }
             })
-
-            if (currentTime >= dinnerBreak.start && currentTime <= dinnerBreak.end) {
-                if (classStartTime >= dinnerBreak.end && classStartTime <= 46799) {
-                    createActivities();
-                }
-            }
 
             if (currentTime > classTimes[classTimes.length - 1].end) { // Er tidspunkt efter sidste classTime.end
                 let nextTimestamp = activitiesArr[0].timestamp;
