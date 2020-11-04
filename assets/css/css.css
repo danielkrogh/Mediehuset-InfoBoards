@@ -45,7 +45,7 @@ body {
 }
 
 #activity-widget {
-  width: 90%;
+  width: 30vw;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
@@ -57,12 +57,6 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-}
-
-@media (min-width: 1200px) {
-  #activity-widget {
-    width: 30%;
-  }
 }
 
 #activity-widget .card {
@@ -105,18 +99,6 @@ body {
 }
 
 #activity-widget .card p {
-<<<<<<< HEAD
-=======
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
->>>>>>> 539e94194936d313c00fde83b2f13bcee0619d88
   padding: 5px;
 }
 
@@ -136,4 +118,3 @@ body {
 #activity-widget .card p.topic {
   width: 30%;
 }
-/*# sourceMappingURL=css.css.map */
