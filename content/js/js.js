@@ -1,171 +1,110 @@
-/*
-    Controller
-*/
-function getActivitiesData() { // Henter data fra API
-    return fetch('https://api.mediehuset.net/infoboard/activities')
-        .then((resp) => {
-            return resp.json()
-                .then((data) => {
-                    return data;
-                })
-                .catch((err) => {
+async function fetchData() {
+    //her henter vi data fra api'et
+    let response = await fetch('https://api.mediehuset.net/infoboard/activities');
+    //tjekker vi om det er af json format
+    let data = await response.json();
 
-                })
-        })
-}
+    //hvis det er det, så kan vi tilgå data'en i andre funktioner
+    return data.result;
+};
 
-function sortActivitiesData() { // Behandler data fra API
-    let activitiesArr = [];
+//dette bruges til at ændre vores nuværende klokkeslet
+const addHours = 0;
+const addSeconds = 3600 * addHours;
 
-    return getActivitiesData().then((data) => {
-        data.result.forEach(element => {
-            activitiesArr.push(element)
-        });
+//dette er vores nuværende klokkeslet (timestamp)
+let currentTime = new Date() / 1000 + addSeconds;
 
-        return activitiesArr;
-    })
-}
+//dette er klokkeslettet for starten af dagen (klokken 00:00:00)
+let dayStart = new Date().setHours(0, 0, 0, 0) / 1000;
 
-
-/*
-    View
-*/
-const activityWidget = document.querySelector('#activity-widget'); // Container der skal indeholde vores aktiviteter
-let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; // Forkortelser i klassernes navne
-
-let infoLi = `
-    <li class="card">
-        <div class="time">Tid</div>
-        <div class="location">Lokale</div>
-        <div class="class">Hold</div>
-        <div class="subject">Fag</div>
-    </li>`;
-
-activityWidget.insertAdjacentHTML('beforeend', infoLi); // Opretter overskrift
-
+//her laver vi et array med de forskellige klokkeslet som skemaet har
 const classTimes = [
-    {start: 29700, end: 33599}, // Kl. 8.15 - 9.20
-    {start: 33600, end: 37199}, // Kl. 9.20 - 10.20
-    {start: 37200, end: 41399}, // Kl. 10.20 - 11.30
-    {start: 41400, end: 46799}, // Kl. 11.30 - 13.00
-    {start: 46800, end: 50399}, // Kl. 13.00 - 14.00
-    {start: 50400, end: 54900} // Kl. 14.00 - 15.15
-]
+    {start: dayStart + 29700, end: dayStart + 33599}, // Kl. 8.15 - 9.20
+    {start: dayStart + 33600, end: dayStart + 37199}, // Kl. 9.20 - 10.20
+    {start: dayStart + 37200, end: dayStart + 41399}, // Kl. 10.20 - 11.30
+    {start: dayStart + 41400, end: dayStart + 46799}, // Kl. 11.30 (12.00) - 13.00
+    {start: dayStart + 46800, end: dayStart + 50399}, // Kl. 13.00 - 14.00
+    {start: dayStart + 50400, end: dayStart + 54900}, // Kl. 14.00 - 15.15
+];
 
-//
-// TIL AT TESTE ANDRE TIDSPUNKTER
-//
-let antalTimer = 2;
-let antalMinutter = 0;
-let antalSekunder = ((new Date().setHours(`${antalTimer}`,`${antalMinutter}`,0,0) - new Date().setHours(0,0,0,0)) / 1000);
+//dette er vores controller som håndterer det data som kommer fra api'en
+async function loadData() {
 
-function setActivities() { // Opretter aktiviteter i HTML
-    sortActivitiesData().then((activitiesArr) => {
-        activitiesArr.forEach(activity => {
+    //her sætter vi data'ene fra fetchData i et array
+    let activityArr = [...await fetchData()];
 
-            let currentTime = ((new Date().getTime() - new Date().setHours(0,0,0,0)) / 1000) + antalSekunder; // Nuværende tid i sekunder siden midnat
-            let classStartTime = (activity.timestamp - (new Date().setHours(0,0,0,0) / 1000)); // Klassensstarttidspunkt i sekunder siden midnat
+    //her finder vi ud af hvilket interval vi er i (hvor vi er i arrayet classTimes)
+    const currentTimeOfDay = classTimes.filter(obj => obj.start <= currentTime && obj.end >= currentTime);
 
-            classTimes.forEach(classTime => {
-                if (currentTime >= classTime.start && currentTime <= classTime.end) { // Er tidspunkt nu mellem classTime.start & classTime.end
-                    if (classStartTime >= classTime.start && classStartTime <= classTime.end) { // Er klasse starttidspunkt mellem classTime.start & classTime.end
-                        createActivities();
-                    }                     
-                }
-            })
+    let listOfActivities;
 
-            if (currentTime > classTimes[classTimes.length - 1].end) { // Er tidspunkt efter sidste classTime.end
-                let nextTimestamp = activitiesArr[0].timestamp;
+    if (currentTimeOfDay.length) {
+        listOfActivities = activityArr.filter(activity =>
+             activity.timestamp >= currentTimeOfDay[0].start && activity.timestamp <= currentTimeOfDay[0].end);
 
-                if (nextTimestamp == activity.timestamp) { // Hvis aktivitets timestamp er samme som første aktivitets timestamp
-                    createActivities();
-                }
+             if(!listOfActivities.length) {
+                let firstKey = activityArr[0];
+                    listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
+             };
+
+    } else {
+        let firstKey = activityArr[0];
+            listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
+    };
+
+    const activeActivities = [];
+
+    listOfActivities.map(activity => {
+        const listItem = [activity.datetime, activity.classroom, activity.class, activity.name, activity.friendly_name];
+
+        activeActivities.push(listItem);        
+    });
+
+    return activeActivities;
+};
+
+//her laver vi vores view
+async function buildview() {
+
+    //her indsætter vi data'ene fra loadData funktionen i et array
+    let activeActivities = [...await loadData()];
+    
+    let activityWidget = document.querySelector("#activity-widget");
+
+    activityWidget.innerHTML = 
+        `<li class="card">
+            <p class="time">Tid</p> 
+            <p class="location">Klasse</p> 
+            <p class="class">Hold</p> 
+            <p class="topic">Fag</p>
+        </li>`;
+
+    for (item of activeActivities) {
+        let date = new Date(item[0]);
+        let time = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()}`;
+        let classs = `${item[2]}`;
+
+
+        let topic = item[4];
+            if (item[4] == '') {
+                topic = item[3];
             }
 
-            if (currentTime < (activitiesArr[0].timestamp - (new Date().setHours(0,0,0,0) / 1000))) { // Er tidspunkt før første aktivitets timestamp
-                let nextTimestamp = activitiesArr[0].timestamp;
+        let classShorthands = ['we', 'ggr', 'agr', 'abi', 'gr', 'dm', 'mg', 'iw']; //array med forkortelser af navne for klasserne
 
-                if (nextTimestamp == activity.timestamp) { // Hvis aktivitets timestamp er samme som første aktivitets timestamp
-                    createActivities();
-                }
-            }
+        for (let i = 0; i < classShorthands.length; i++) {
+            if(classs.search(classShorthands[i]) >= 0) {
+                activityWidget.innerHTML += 
+                `<li class="card">
+                    <p class="time ${classShorthands[i]}">${time}</p> 
+                    <p class="location">${item[1]}</p> 
+                    <p class="class">${classs}</p> 
+                    <p class="topic">${topic}</p>
+                </li>`;
+            };
+        };
+    };
+};
 
-            function createActivities() {
-                let li = document.createElement('li');
-
-                for (i = 0; i < classShorthands.length; i++) { // Looper forkortelser igennem, loop breakes ved match
-                    if (activity.class.search(`${classShorthands[i]}`) >= 0) { // Vi søger i aktivitetens klassenavn efter forkortelse. Uden match vil vi få -1
-                        let date = new Date(activity.datetime);
-                        
-                        li.setAttribute('class', 'card');
-
-                        let divTime = document.createElement('div');
-                        divTime.setAttribute('class', `time ${classShorthands[i]}`);
-                        divTime.innerHTML = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()}`
-
-                        let divLocation = document.createElement('div');
-                        divLocation.setAttribute('class', 'location');
-                        divLocation.innerHTML = `${activity.classroom}`
-
-                        let divClass = document.createElement('div');
-                        divClass.setAttribute('class', 'class');
-                        divClass.innerHTML = `${activity.class}`
-
-                        let divSubject = document.createElement('div');
-                        divSubject.setAttribute('class', 'subject');
-                        divSubject.innerHTML = `${activity.name}`
-
-                        li.appendChild(divTime);
-                        li.appendChild(divLocation);
-                        li.appendChild(divClass);
-                        li.appendChild(divSubject);
-
-                        break;
-                    } else {
-
-                    }
-                }
-                activityWidget.appendChild(li)
-
-                function changeName(shorthand) { // Funktion vi kan kalde, for at lave forkortelse om til uddannelsens navn
-                    let text;
-                    switch (shorthand) {
-                        case 'we':
-                            text = 'Webudvikler';
-                            return text;
-                            break;
-                        case 'ggr':
-                            text = 'Grafisk Tekniker Grundforløb 2';
-                            return text;
-                            break;
-                        case 'agr':
-                            text = 'AMU - Billedbehandling';
-                            return text;
-                            break;
-                        case 'abi':
-                            text = 'AMU - Grafisk';
-                            return text;
-                            break;
-                        case 'gr':
-                            text = 'Grafisk Tekniker';
-                            return text;
-                            break;
-                        case 'dm':
-                            text = 'Digital Medier';
-                            return text;
-                            break;
-                        case 'mg':
-                            text = 'Mediegrafiker';
-                            return text;
-                            break;
-                        case 'iw':
-                            text = 'It, web og medier';
-                            return text;
-                    }
-                }
-            }
-        })
-    })
-}
-
-setActivities();
+setInterval(buildview(), 1000*60*10);
