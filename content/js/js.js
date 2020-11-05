@@ -9,7 +9,7 @@ async function fetchData() {
 };
 
 //dette bruges til at ændre vores nuværende klokkeslet
-const addHours = 3;
+const addHours = 0;
 const addSeconds = 3600 * addHours;
 
 //dette er vores nuværende klokkeslet (timestamp)
@@ -37,8 +37,10 @@ async function loadData() {
     //her finder vi ud af hvilket interval vi er i (hvor vi er i arrayet classTimes)
     const currentTimeOfDay = classTimes.filter(obj => obj.start <= currentTime && obj.end >= currentTime);
 
+    //her deklererer vi en variabel som kommer til at være et array. dette array kommer fra det filtreret activityArr.
     let listOfActivities;
 
+    //her kigger vi på om vi befinder os i arrayet classTimes og hvis vi gør så skal den filtrerer activityArr efter hvilke timer som er igang 
     if (currentTimeOfDay.length) {
         listOfActivities = activityArr.filter(activity =>
              activity.timestamp >= currentTimeOfDay[0].start && activity.timestamp <= currentTimeOfDay[0].end);
@@ -47,10 +49,12 @@ async function loadData() {
                 getFirstActivities()
              };
 
+             //hvis vi ikke er i arrayet så skal den finde timerne fra næste dag
     } else {
         getFirstActivities()
     };
 
+    //dette er funktionen som finder timerne for den næste dag
     function getFirstActivities() {
         let firstKey = activityArr[0];
         listOfActivities = activityArr.filter(activity => activity.timestamp <= (firstKey.timestamp + 3899));
@@ -58,25 +62,30 @@ async function loadData() {
         return listOfActivities;
     }
 
+    //her deklererer vi en konstant som er et array af de timer som er aktive
     const activeActivities = [];
 
+    //hvis vi er inde for et interval i classTimes så tager vi de filtreret aktiviteter og indsætter(mapper) dem i arrayet activeActivities.
     listOfActivities.map(activity => {
         const listItem = [activity.datetime, activity.classroom, activity.class, activity.name, activity.friendly_name];
 
         activeActivities.push(listItem);        
     });
 
+    //her returner vi konstanten activeActivities, så vi kan bruge den i en senere funktion 
     return activeActivities;
 };
 
-//her laver vi vores view
+//her laver vi vores view funktion
 async function buildview() {
 
     //her indsætter vi data'ene fra loadData funktionen i et array
     let activeActivities = [...await loadData()];
     
+    //her deklererer vi en variabel som er vores activityWidget
     let activityWidget = document.querySelector("#activity-widget");
 
+    //da der altid skal ligge en liste i toppen af widgeten, så indsætter vi den her.
     activityWidget.innerHTML = 
         `<li class="card">
             <p class="time">Tid</p> 
@@ -85,12 +94,16 @@ async function buildview() {
             <p class="topic">Fag</p>
         </li>`;
 
+    //da aktiviteterne ændrer sig iforhold til tiderne på dagen, så laves de her.
     for (item of activeActivities) {
+
+        //her deklererer vi et par variabler
         let date = new Date(item[0]);
         let time = `${date.getHours()}:${(date.getMinutes()<10?'0':'') + date.getMinutes()}`;
         let classs = `${item[2]}`;
 
 
+        //dette gør at hvis der ikke findet et friendly_name så bruger den bare det normale name
         let topic = item[4];
             if (item[4] == '') {
                 topic = item[3];
@@ -112,4 +125,4 @@ async function buildview() {
     };
 };
 
-setInterval(buildview(), 1000*60*10);
+setInterval(buildview, 1000*60*10);
