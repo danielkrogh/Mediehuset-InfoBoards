@@ -125,4 +125,4 @@ async function buildview() {
     };
 };
 
-setInterval(buildview, 1000*60*10);
+setInterval(buildview(), 1000*60*10);
